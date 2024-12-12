@@ -4,12 +4,20 @@ const Employee = require('../models/Employee');
 
 // Create a new employee
 router.post('/', async (req, res) => {
-  const { name, position, avatar, email, mobile } = req.body;
-  const employee = new Employee({ name, position, avatar, email, mobile });
+  const { name, position, email, mob } = req.body; // Changed 'mobile' to 'mob'
+  const avatar = 'https://via.placeholder.com/150'; // Default avatar URL
+  console.log('Request Body:', req.body); // Log the request body
+
+  if (!name || !position || !email || !mob) {
+    return res.status(400).send({ error: 'All fields are required' });
+  }
+
+  const employee = new Employee({ name, position, avatar, email, mob }); // Changed 'mobile' to 'mob'
   try {
     await employee.save();
-    res.status(201).send(employee);
+    res.status(201).send({ message: 'Employee added successfully', employee });
   } catch (error) {
+    console.error('Error adding employee:', error); // Log the error
     res.status(400).send({ error: error.message });
   }
 });
@@ -40,19 +48,16 @@ router.get('/:id', async (req, res) => {
 // Update an employee by ID
 router.put('/:id', async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ['name', 'position', 'avatar', 'email', 'mobile'];
+  const allowedUpdates = ['name', 'position', 'avatar', 'email', 'mob'];
   const isValidOperation = updates.every(update => allowedUpdates.includes(update));
-
   if (!isValidOperation) {
     return res.status(400).send({ error: 'Invalid updates!' });
   }
-
   try {
     const employee = await Employee.findById(req.params.id);
     if (!employee) {
       return res.status(404).send();
     }
-
     updates.forEach(update => employee[update] = req.body[update]);
     await employee.save();
     res.status(200).send(employee);

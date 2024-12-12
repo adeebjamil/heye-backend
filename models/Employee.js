@@ -1,23 +1,28 @@
 const mongoose = require('mongoose');
 
 const employeeSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  position: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  mob: {
-    type: String,
-    required: true,
-  },
+  name: { type: String, required: true },
+  position: { type: String, required: true },
+  email: { type: String, required: true },
+  mob: { type: String, required: true }, // Changed 'mobile' to 'mob'
+  avatar: { type: String, default: '' }
 });
 
-module.exports = mongoose.model('Employee', employeeSchema);
+// Virtual property to generate avatar initials
+employeeSchema.virtual('initials').get(function() {
+  const names = this.name.split(' ');
+  const initials = names.map(name => name.charAt(0).toUpperCase()).join('');
+  return initials;
+});
+
+// Pre-save middleware to set the avatar field
+employeeSchema.pre('save', function(next) {
+  if (!this.avatar) {
+    this.avatar = this.initials;
+  }
+  next();
+});
+
+const Employee = mongoose.model('Employee', employeeSchema);
+
+module.exports = Employee;

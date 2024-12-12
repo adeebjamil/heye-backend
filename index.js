@@ -10,6 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 const mongoURI = process.env.MONGODB_URI;
+console.log('MongoDB URI:', mongoURI); // Log the MongoDB URI
 
 mongoose.connect(mongoURI)
   .then(() => {
@@ -23,11 +24,13 @@ mongoose.connect(mongoURI)
 const employeeRouter = require('./routes/employee');
 const attendanceRouter = require('./routes/attendance');
 const leaveRouter = require('./routes/leave');
+const notesRouter = require('./routes/notes'); 
 
 // Use routes
 app.use('/employees', employeeRouter);
-app.use('/attendance', attendanceRouter);
+app.use('/attendance', attendanceRouter); // Ensure this matches the URL being requested
 app.use('/leaves', leaveRouter);
+app.use('/notes', notesRouter); // Add this line
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Office Management System API");
