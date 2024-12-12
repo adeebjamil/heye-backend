@@ -1,7 +1,7 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -10,36 +10,33 @@ app.use(cors());
 app.use(express.json());
 
 const mongoURI = process.env.MONGODB_URI;
-console.log('MongoDB URI:', mongoURI); // Log the MongoDB URI
 
-mongoose.connect(mongoURI)
+mongoose
+  .connect(mongoURI)
   .then(() => {
-    console.log('Connected to MongoDB Atlas');
+    console.log("Connected to MongoDB Atlas");
   })
   .catch((error) => {
-    console.error('Connection error:', error.message);
+    console.error("Connection error:", error.message);
   });
 
 // Import routes
-const employeeRouter = require('./routes/employee');
-const attendanceRouter = require('./routes/attendance');
-const leaveRouter = require('./routes/leave');
-const notesRouter = require('./routes/notes'); 
+const employeeRouter = require("./routes/employee");
+const attendanceRouter = require("./routes/attendance");
+const leaveRouter = require("./routes/leave");
 
 // Use routes
-app.use('/employees', employeeRouter);
-app.use('/attendance', attendanceRouter); // Ensure this matches the URL being requested
-app.use('/leaves', leaveRouter);
-app.use('/notes', notesRouter); // Add this line
+app.use("/employees", employeeRouter);
+app.use("/attendance", attendanceRouter);
+app.use("/leaves", leaveRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Office Management System API");
 });
 
-// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send({ error: 'Something went wrong!' });
+  res.status(500).send({ error: "Something went wrong!" });
 });
 
 app.listen(PORT, () => {
