@@ -5,7 +5,7 @@ const Employee = require('../models/Employee');
 // Create a new employee
 router.post('/', async (req, res) => {
   const { name, position, email, mob } = req.body; // Changed 'mobile' to 'mob'
-  const avatar = 'https://via.placeholder.com/150'; // Default avatar URL
+  const avatar = 'https://img.freepik.com/premium-vector/man-is-sitting-desk-with-laptop-man-is-using-laptop_1230457-9543.jpg?w=740'; // Default avatar URL
   console.log('Request Body:', req.body); // Log the request body
 
   if (!name || !position || !email || !mob) {
