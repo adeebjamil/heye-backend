@@ -6,7 +6,7 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = ["https://heye-frontend.vercel.app/", "http://localhost:5173"];
+const allowedOrigins = ["https://heye-frontend-wdfd.vercel.app/", "http://localhost:5173"];
 
 app.use(cors({
   origin: function (origin, callback) {
