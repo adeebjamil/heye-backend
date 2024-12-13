@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const PDFDocument = require('pdfkit');
 const Attendance = require('../models/Attendance');
 
 // Get all attendance records
@@ -60,5 +61,37 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Generate PDF for all attendance records
+router.get('/download-attendance', async (req, res) => {
+  try {
+    const attendanceRecords = await Attendance.find().populate('employeeId');
+
+    const doc = new PDFDocument();
+    let filename = 'attendance_records.pdf';
+    filename = encodeURIComponent(filename);
+
+    res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
+    res.setHeader('Content-type', 'application/pdf');
+
+    doc.text('Employee Attendance Records', { align: 'center' });
+    doc.moveDown();
+
+    attendanceRecords.forEach(record => {
+      doc.text(`Employee: ${record.employeeId.name}`);
+      doc.text(`  Date: ${new Date(record.date).toLocaleDateString()}`);
+      doc.text(`  Status: ${record.status}`);
+      doc.text(`  Work Done: ${record.workDone}`);
+      doc.moveDown();
+    });
+
+    doc.pipe(res);
+    doc.end();
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
+
 
 module.exports = router;

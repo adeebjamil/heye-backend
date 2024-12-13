@@ -6,12 +6,18 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors(
-  {
-    origin: "https://dash-frontend-nine.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  }
-));
+const allowedOrigins = ["https://dash-frontend-nine.vercel.app", "http://localhost:5173"];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+}));
 app.use(express.json());
 
 const mongoURI = process.env.MONGODB_URI;
